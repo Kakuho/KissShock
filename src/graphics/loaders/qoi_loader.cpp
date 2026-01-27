@@ -12,6 +12,9 @@ namespace KissShock{
     m_buffer = std::move(std::vector<std::uint8_t>{raw, raw+size});
   }
 
+  void QoiLoader::PrintDetails() const{
+  }
+
   void QoiLoader::PrintBuffer() const{
     for(int i = 1; i < m_buffer.size() +1; i++){
       std::print("{:#04x} ", m_buffer[i-1]);
@@ -19,6 +22,14 @@ namespace KissShock{
         std::println("");
       }
     }
+  }
+
+  void QoiLoader::InitHeader(){
+    std::memcpy(&m_header, m_buffer.data(), 14);
+  }
+  
+  std::vector<std::uint8_t> QoiLoader::Decode() const{
+    std::vector<std::uint8_t> output;
   }
 
 }

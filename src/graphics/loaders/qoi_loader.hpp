@@ -12,27 +12,33 @@
 #include <string_view>
 #include <fstream>
 #include <print>
+#include <cstring>
 
 namespace KissShock{
   class QoiLoader{
+    static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
 
-    struct QoiHeader{
-      std::uint8_t header[4];
+    struct [[gnu::packed]] QoiHeader{
+      std::array<char, 4> header;
       std::uint32_t width;
       std::uint32_t height;
       std::uint8_t channels;
       std::uint8_t colourspace;
     };
+    static_assert(sizeof(QoiHeader) == 14);
 
     public:
       QoiLoader(std::string_view filename);
       
+      void PrintDetails() const;
       void PrintBuffer() const;
       std::vector<std::uint8_t> Decode() const;
 
     private:
       void IsValid() const;
-      
+      void InitHeader();
+
+      QoiHeader m_header;
       std::vector<std::uint8_t> m_buffer;
       std::array<std::uint8_t, 64> m_prevpixels;
   };
