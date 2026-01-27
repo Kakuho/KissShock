@@ -22,7 +22,9 @@
 
 namespace KissShock{
 
-  struct Pixel{  // would perf be better if we packed the components into a std::uint32_t?
+  struct Pixel{  
+    // would perf be better if we packed the components into a std::uint32_t?
+    // should just move the value into a 32-bit register
     std::uint8_t red;
     std::uint8_t green;
     std::uint8_t blue;
@@ -56,7 +58,6 @@ namespace KissShock{
     static constexpr Pixel INITIAL_PIXEL = {0, 0, 0, 255};
     static constexpr std::array<std::uint8_t, 8> END_BLOCK = 
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-
 
     static constexpr std::size_t DATA_START = 14;
 
@@ -94,6 +95,9 @@ namespace KissShock{
         return (p.red * 3 + p.green * 5 + p.blue * 7 + p.alpha * 11) % 64;
       }
 
+      void SetLastPixel(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha);
+      void SetLastPixel(Pixel pixel);
+      
       void PrintDetails() const;
       void PrintBuffer() const;
       bool IsEndBlock(std::size_t index) const;

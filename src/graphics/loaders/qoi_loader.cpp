@@ -18,6 +18,16 @@ namespace KissShock{
     InitHeader();
   }
 
+  void QoiLoader::SetLastPixel(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha){
+    // created a function so that if i want to switch representation of Pixel it would be easy
+    m_lastPixel = Pixel{red, blue, green, alpha};
+  }
+
+  void QoiLoader::SetLastPixel(Pixel pixel){
+    // created a function so that if i want to switch representation of Pixel it would be easy
+    m_lastPixel = pixel;
+  }
+
   void QoiLoader::PrintDetails() const{
     std::print("Header Magic: ");
     for(int i = 0; i < m_header.header.size(); i++){
@@ -95,9 +105,8 @@ namespace KissShock{
     output.push_back(blue);
     output.push_back(green);
     output.push_back(m_lastPixel.alpha);
-    m_lastPixel.red = red;
-    m_lastPixel.blue = blue;
-    m_lastPixel.green = green;
+    SetLastPixel(red, green, blue, m_lastPixel.alpha);
+    m_window.Push(m_lastPixel);
     index += 4;
   }
 
@@ -110,26 +119,19 @@ namespace KissShock{
     output.push_back(blue);
     output.push_back(green);
     output.push_back(alpha);
-    m_lastPixel.red = red;
-    m_lastPixel.blue = blue;
-    m_lastPixel.green = green;
-    m_lastPixel.alpha = alpha;
+    SetLastPixel(red, green, blue, alpha);
+    m_window.Push(m_lastPixel);
     index += 5;
   }
 
   void QoiLoader::HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
-    std::uint8_t red = m_buffer[index + 1];
-    std::uint8_t blue = m_buffer[index + 2];
-    std::uint8_t green = m_buffer[index + 3];
-    std::uint8_t alpha = m_buffer[index + 4];
-    output.push_back(red);
-    output.push_back(blue);
-    output.push_back(green);
-    output.push_back(alpha);
-    m_lastPixel.red = red;
-    m_lastPixel.blue = blue;
-    m_lastPixel.green = green;
-    m_lastPixel.alpha = alpha;
-    index += 5;
+    std::uint8_t pindex = m_buffer[index] & 0x3F;
+    auto pixel = m_window.Get(pindex);
+    output.push_back(pixel.red);
+    output.push_back(pixel.green);
+    output.push_back(pixel.blue);
+    output.push_back(pixel.alpha);
+    m_lastPixel = pixel;
+    index += 1;
   }
 }
