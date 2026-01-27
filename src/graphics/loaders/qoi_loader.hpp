@@ -7,16 +7,23 @@
 //  Deocode() will return a std::vector<std::uint8_t> containing the decoded image pixels
 
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <vector>
 #include <string_view>
 #include <fstream>
 #include <print>
 #include <cstring>
+#include <expected>
+#include <bit>
 
 namespace KissShock{
   class QoiLoader{
     static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
+
+    enum class LoaderError{
+      MAGIC_FAILED
+    };
 
     struct [[gnu::packed]] QoiHeader{
       std::array<char, 4> header;
@@ -32,7 +39,7 @@ namespace KissShock{
       
       void PrintDetails() const;
       void PrintBuffer() const;
-      std::vector<std::uint8_t> Decode() const;
+      std::expected<std::vector<std::uint8_t>, LoaderError> Decode() const;
 
     private:
       void IsValid() const;
