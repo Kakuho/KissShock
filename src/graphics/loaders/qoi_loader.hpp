@@ -21,6 +21,14 @@
 #include <algorithm>
 
 namespace KissShock{
+
+  struct Pixel{
+    std::uint8_t red;
+    std::uint8_t green;
+    std::uint8_t blue;
+    std::uint8_t alpha;
+  };
+
   class QoiLoader{
     static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
     static constexpr std::array<std::uint8_t, 8> END_BLOCK = 
@@ -53,6 +61,14 @@ namespace KissShock{
 
     public:
       QoiLoader(std::string_view filename);
+
+      static constexpr std::uint8_t Hash(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a){
+        return (r * 3 + g * 5 + b * 7 + a * 11) % 64;
+      }
+
+      static constexpr std::uint8_t Hash(Pixel& p){
+        return (p.red * 3 + p.green * 5 + p.blue * 7 + p.alpha * 11) % 64;
+      }
       
       void PrintDetails() const;
       void PrintBuffer() const;
@@ -89,6 +105,6 @@ namespace KissShock{
 
       QoiHeader m_header;
       std::vector<std::uint8_t> m_buffer;
-      std::array<std::uint8_t, 64> m_prevpixels;
+      std::array<Pixel, 64> m_prevpixels;
   };
 }
