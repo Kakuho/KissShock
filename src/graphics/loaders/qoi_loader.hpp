@@ -33,12 +33,17 @@ namespace KissShock{
 
   class QoiPixelWindow{
     public:
+      QoiPixelWindow(){
+        m_buffer.fill(Pixel{0, 0, 0, 0});
+      }
+
       // the window of last seen pixels
       void Push(Pixel& pixel){
         if(m_lastIndex == m_buffer.size()){
           m_lastIndex = 0;
         }
         m_buffer[m_lastIndex] = pixel;
+        m_lastIndex++;
       }
 
       Pixel Get(std::size_t index){
@@ -107,23 +112,24 @@ namespace KissShock{
       void IsValid() const;
       void InitHeader();
 
-      void HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output);
-      void HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output);
-      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output);
+      void HandleRGBChunk(std::vector<std::uint8_t>& output);
+      void HandleRGBAChunk(std::vector<std::uint8_t>& output);
+      void HandleIndexChunk(std::vector<std::uint8_t>& output);
 
-      void HandleDiffChunk(std::size_t index, std::vector<std::uint8_t>& output){
+      void HandleDiffChunk(std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleDiffChunk(...) Unimplemented"};
       }
 
-      void HandleLumaChunk(std::size_t index, std::vector<std::uint8_t>& output){
+      void HandleLumaChunk(std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleLumaChunk(...) Unimplemented"};
       }
 
-      void HandleRunChunk(std::size_t index, std::vector<std::uint8_t>& output){
+      void HandleRunChunk(std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleRunChunk(...) Unimplemented"};
       }
 
       QoiHeader m_header;
+      std::size_t m_pos;
       Pixel m_lastPixel;
       std::vector<std::uint8_t> m_buffer;
       QoiPixelWindow m_window;

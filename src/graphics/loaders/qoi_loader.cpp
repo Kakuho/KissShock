@@ -6,6 +6,7 @@
 namespace KissShock{
   QoiLoader::QoiLoader(std::string_view filename)
     :
+      m_pos{DATA_START},
       m_lastPixel{INITIAL_PIXEL}
   {
     std::ifstream ifst{filename.data(), std::ios_base::ate};
@@ -67,71 +68,68 @@ namespace KissShock{
     }
     std::size_t imageSize = m_header.width * m_header.height * m_header.channels;
     std::vector<std::uint8_t> output(imageSize);  // init with imageSize amount of elements
-    std::size_t index = DATA_START;
-    while(!IsEndBlock(index)){
-      if(m_buffer[index] & 0xFE){
-        HandleRGBChunk(index, output);
+    while(!IsEndBlock(m_pos)){
+      if(m_buffer[m_pos] == 0xFE){
+        HandleRGBChunk(output);
       }
-      else if(m_buffer[index] & 0xFF){
-        HandleRGBAChunk(index, output);
+      else if(m_buffer[m_pos] == 0xFF){
+        HandleRGBAChunk(output);
       }
-      else if(m_buffer[index] & 0xC0){
-        HandleRunChunk(index, output);
+      else if((m_buffer[m_pos] >> 6) == 0b11){
+        HandleRunChunk(output);
       }
-      else if(!(m_buffer[index] & 0x3F)){
-        HandleIndexChunk(index, output);
+      else if((m_buffer[m_pos] >> 6) ==  0b00){
+        HandleIndexChunk(output);
       }
-      else if(m_buffer[index] & 0x40){
-        HandleDiffChunk(index, output);
+      else if((m_buffer[m_pos] >> 6) == 0b01){
+        HandleDiffChunk(output);
       }
-      else if(m_buffer[index] & 0x80){
-        HandleLumaChunk(index, output);
-      }
-      else if(m_buffer[index] & 0x80){
-        HandleLumaChunk(index, output);
+      else if((m_buffer[m_pos] >> 6) == 0b10){
+        HandleLumaChunk(output);
       }
       else{
         return std::unexpected(LoaderError::UNKOWN_CHUNK);
       }
       // index updating is handled in the chunk handler functions
     }
+    return output;
   }
 
-  void QoiLoader::HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
-    std::uint8_t red = m_buffer[index + 1];
-    std::uint8_t blue = m_buffer[index + 2];
-    std::uint8_t green = m_buffer[index + 3];
+  void QoiLoader::HandleRGBChunk(std::vector<std::uint8_t>& output){ 
+    std::uint8_t red = m_buffer[m_pos + 1];
+    std::uint8_t blue = m_buffer[m_pos + 2];
+    std::uint8_t green = m_buffer[m_pos + 3];
     output.push_back(red);
     output.push_back(blue);
     output.push_back(green);
     output.push_back(m_lastPixel.alpha);
     SetLastPixel(red, green, blue, m_lastPixel.alpha);
     m_window.Push(m_lastPixel);
-    index += 4;
+    m_pos += 4;
   }
 
-  void QoiLoader::HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
-    std::uint8_t red = m_buffer[index + 1];
-    std::uint8_t blue = m_buffer[index + 2];
-    std::uint8_t green = m_buffer[index + 3];
-    std::uint8_t alpha = m_buffer[index + 4];
+  void QoiLoader::HandleRGBAChunk(std::vector<std::uint8_t>& output){ 
+    std::uint8_t red = m_buffer[m_pos + 1];
+    std::uint8_t blue = m_buffer[m_pos + 2];
+    std::uint8_t green = m_buffer[m_pos + 3];
+    std::uint8_t alpha = m_buffer[m_pos + 4];
     output.push_back(red);
     output.push_back(blue);
     output.push_back(green);
     output.push_back(alpha);
     SetLastPixel(red, green, blue, alpha);
     m_window.Push(m_lastPixel);
-    index += 5;
+    m_pos += 5;
   }
 
-  void QoiLoader::HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
-    std::uint8_t pindex = m_buffer[index] & 0x3F;
-    auto pixel = m_window.Get(pindex);
+  void QoiLoader::HandleIndexChunk(std::vector<std::uint8_t>& output){ 
+    std::uint8_t pindex = m_buffer[m_pos] & 0x3F;
+    auto pixel = m_window.Get(m_pos);
     output.push_back(pixel.red);
     output.push_back(pixel.green);
     output.push_back(pixel.blue);
     output.push_back(pixel.alpha);
     m_lastPixel = pixel;
-    index += 1;
+    m_pos += 1;
   }
 }
