@@ -14,7 +14,7 @@ namespace KissShock{
   void Window::HandleEvents(){
     sf::Event event;
     while(m_window.pollEvent(event)){
-      if (event.type == sf::Event::Closed){
+      if(event.type == sf::Event::Closed){
         std::println("Exiting...");
         m_window.close();
       }
@@ -45,5 +45,4 @@ namespace KissShock{
     m_window.draw(m_fbSprite);
     m_window.display();
   }
-
 }
