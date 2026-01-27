@@ -16,13 +16,28 @@
 #include <cstring>
 #include <expected>
 #include <bit>
+#include <ranges>
+#include <algorithm>
 
 namespace KissShock{
   class QoiLoader{
     static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
+    static constexpr std::array<std::uint8_t, 8> END_BLOCK = 
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
+    static constexpr std::size_t DATA_START = 14;
 
     enum class LoaderError{
       MAGIC_FAILED
+    };
+
+    enum class DataChunkType: std::uint8_t{
+      RGB = 0xFE,
+      RGBA = 0xFF,
+      RUN = 0b1100'0000,
+      INDEX = 0b0000'0000,
+      DIFF = 0b0100'0000,
+      LUMA = 0b1000'0000
     };
 
     struct [[gnu::packed]] QoiHeader{
@@ -39,6 +54,7 @@ namespace KissShock{
       
       void PrintDetails() const;
       void PrintBuffer() const;
+      bool IsEndBlock(std::size_t index) const;
       std::expected<std::vector<std::uint8_t>, LoaderError> Decode() const;
 
     private:

@@ -41,6 +41,11 @@ namespace KissShock{
     m_header.width = std::byteswap(m_header.width);
     m_header.height = std::byteswap(m_header.height);
   }
+
+  bool QoiLoader::IsEndBlock(std::size_t index) const{
+    auto currentBlock = m_buffer | std::views::drop(index) | std::views::take(8);
+    return std::ranges::equal(currentBlock, END_BLOCK);
+  }
   
   std::expected<std::vector<std::uint8_t>, QoiLoader::LoaderError> QoiLoader::Decode() const{
     if(m_header.header != MAGIC){
@@ -48,7 +53,10 @@ namespace KissShock{
     }
     std::size_t imageSize = m_header.width * m_header.height * m_header.channels;
     std::vector<std::uint8_t> output(imageSize);  // init with imageSize amount of elements
-    
+    std::size_t index = DATA_START;
+    while(!IsEndBlock(index)){
+      index++;
+    }
   }
 
 }
