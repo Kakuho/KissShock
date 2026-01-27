@@ -9,14 +9,17 @@
 #include <vector>
 #include <string_view>
 #include <fstream>
+#include <print>
 
 namespace KissShock{
   class QoiLoader{
     public:
       QoiLoader(std::string_view filename);
+      
+      void PrintBuffer() const;
 
     private:
-      auto IsValid() const -> bool;
+      void IsValid() const;
       
       std::vector<std::uint8_t> m_buffer;
       std::array<std::uint8_t, 64> m_prevpixels;

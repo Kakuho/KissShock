@@ -3,12 +3,22 @@
 
 namespace KissShock{
   QoiLoader::QoiLoader(std::string_view filename){
-    std::basic_ifstream<std::uint8_t> ifst{filename.data(), std::ios_base::ate};
+    std::ifstream ifst{filename.data(), std::ios_base::ate};
     std::size_t size = ifst.tellg();
     ifst.seekg(0);
     // read the data into some buffer
-    std::uint8_t raw[size];
+    char raw[size];
     ifst.readsome(raw, size);
     m_buffer = std::move(std::vector<std::uint8_t>{raw, raw+size});
   }
+
+  void QoiLoader::PrintBuffer() const{
+    for(int i = 1; i < m_buffer.size() +1; i++){
+      std::print("{:#04x} ", m_buffer[i-1]);
+      if(i % 16 == 0){
+        std::println("");
+      }
+    }
+  }
+
 }
