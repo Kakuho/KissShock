@@ -31,8 +31,10 @@ namespace KissShock{
 
   class QoiLoader{
     static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
+    static constexpr Pixel INITIAL_PIXEL = {0, 0, 0, 255};
     static constexpr std::array<std::uint8_t, 8> END_BLOCK = 
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
 
     static constexpr std::size_t DATA_START = 14;
 
@@ -73,37 +75,33 @@ namespace KissShock{
       void PrintDetails() const;
       void PrintBuffer() const;
       bool IsEndBlock(std::size_t index) const;
-      std::expected<std::vector<std::uint8_t>, LoaderError> Decode() const;
+      std::expected<std::vector<std::uint8_t>, LoaderError> Decode();
 
     private:
       void IsValid() const;
       void InitHeader();
 
-      void HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output) const{ 
-        throw std::runtime_error{"QoiLoader::HandleRGBChunk(...) Unimplemented"};
-      }
+      void HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output);
+      void HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output);
 
-      void HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output) const{ 
-        throw std::runtime_error{"QoiLoader::HandleRGBAChunk(...) Unimplemented"};
-      }
-
-      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleIndexChunk(...) Unimplemented"};
       }
 
-      void HandleDiffChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+      void HandleDiffChunk(std::size_t index, std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleDiffChunk(...) Unimplemented"};
       }
 
-      void HandleLumaChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+      void HandleLumaChunk(std::size_t index, std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleLumaChunk(...) Unimplemented"};
       }
 
-      void HandleRunChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+      void HandleRunChunk(std::size_t index, std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleRunChunk(...) Unimplemented"};
       }
 
       QoiHeader m_header;
+      Pixel m_lastPixel;
       std::vector<std::uint8_t> m_buffer;
       std::array<Pixel, 64> m_prevpixels;
   };

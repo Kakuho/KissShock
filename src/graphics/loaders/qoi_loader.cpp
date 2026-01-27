@@ -4,7 +4,10 @@
 #include <fstream>
 
 namespace KissShock{
-  QoiLoader::QoiLoader(std::string_view filename){
+  QoiLoader::QoiLoader(std::string_view filename)
+    :
+      m_lastPixel{INITIAL_PIXEL}
+  {
     std::ifstream ifst{filename.data(), std::ios_base::ate};
     std::size_t size = ifst.tellg();
     ifst.seekg(0);
@@ -48,7 +51,7 @@ namespace KissShock{
     return std::ranges::equal(currentBlock, END_BLOCK);
   }
   
-  std::expected<std::vector<std::uint8_t>, QoiLoader::LoaderError> QoiLoader::Decode() const{
+  std::expected<std::vector<std::uint8_t>, QoiLoader::LoaderError> QoiLoader::Decode(){
     if(m_header.header != MAGIC){
       return std::unexpected(LoaderError::MAGIC_FAILED);
     }
@@ -83,6 +86,34 @@ namespace KissShock{
       // index updating is handled in the chunk handler functions
     }
   }
+
+  void QoiLoader::HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
+    std::uint8_t red = m_buffer[index + 1];
+    std::uint8_t blue = m_buffer[index + 2];
+    std::uint8_t green = m_buffer[index + 3];
+    output.push_back(red);
+    output.push_back(blue);
+    output.push_back(green);
+    output.push_back(m_lastPixel.alpha);
+    m_lastPixel.red = red;
+    m_lastPixel.blue = blue;
+    m_lastPixel.green = green;
+    index += 4;
+  }
+
+  void QoiLoader::HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
+    std::uint8_t red = m_buffer[index + 1];
+    std::uint8_t blue = m_buffer[index + 2];
+    std::uint8_t green = m_buffer[index + 3];
+    std::uint8_t alpha = m_buffer[index + 4];
+    output.push_back(red);
+    output.push_back(blue);
+    output.push_back(green);
+    output.push_back(alpha);
+    m_lastPixel.red = red;
+    m_lastPixel.blue = blue;
+    m_lastPixel.green = green;
+    m_lastPixel.alpha = alpha;
+    index += 5;
+  }
 }
-
-
