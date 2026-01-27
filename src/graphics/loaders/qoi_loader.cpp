@@ -1,5 +1,6 @@
 #include "qoi_loader.hpp"
 #include <bit>
+#include <exception>
 #include <fstream>
 
 namespace KissShock{
@@ -55,8 +56,31 @@ namespace KissShock{
     std::vector<std::uint8_t> output(imageSize);  // init with imageSize amount of elements
     std::size_t index = DATA_START;
     while(!IsEndBlock(index)){
-      index++;
+      if(m_buffer[index] & 0xFE){
+        HandleRGBChunk(index, output);
+      }
+      else if(m_buffer[index] & 0xFF){
+        HandleRGBAChunk(index, output);
+      }
+      else if(m_buffer[index] & 0xC0){
+        HandleRunChunk(index, output);
+      }
+      else if(!(m_buffer[index] & 0x3F)){
+        HandleIndexChunk(index, output);
+      }
+      else if(m_buffer[index] & 0x40){
+        HandleDiffChunk(index, output);
+      }
+      else if(m_buffer[index] & 0x80){
+        HandleLumaChunk(index, output);
+      }
+      else if(m_buffer[index] & 0x80){
+        HandleLumaChunk(index, output);
+      }
+      else{
+        return std::unexpected(LoaderError::UNKOWN_CHUNK);
+      }
+      // index updating is handled in the chunk handler functions
     }
   }
-
 }

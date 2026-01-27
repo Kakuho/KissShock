@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <stdexcept>
 #include <vector>
 #include <string_view>
 #include <fstream>
@@ -28,7 +29,8 @@ namespace KissShock{
     static constexpr std::size_t DATA_START = 14;
 
     enum class LoaderError{
-      MAGIC_FAILED
+      MAGIC_FAILED,
+      UNKOWN_CHUNK
     };
 
     enum class DataChunkType: std::uint8_t{
@@ -60,6 +62,30 @@ namespace KissShock{
     private:
       void IsValid() const;
       void InitHeader();
+
+      void HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output) const{ 
+        throw std::runtime_error{"QoiLoader::HandleRGBChunk(...) Unimplemented"};
+      }
+
+      void HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output) const{ 
+        throw std::runtime_error{"QoiLoader::HandleRGBAChunk(...) Unimplemented"};
+      }
+
+      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+        throw std::runtime_error{"QoiLoader::HandleIndexChunk(...) Unimplemented"};
+      }
+
+      void HandleDiffChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+        throw std::runtime_error{"QoiLoader::HandleDiffChunk(...) Unimplemented"};
+      }
+
+      void HandleLumaChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+        throw std::runtime_error{"QoiLoader::HandleLumaChunk(...) Unimplemented"};
+      }
+
+      void HandleRunChunk(std::size_t index, std::vector<std::uint8_t>& output) const{
+        throw std::runtime_error{"QoiLoader::HandleRunChunk(...) Unimplemented"};
+      }
 
       QoiHeader m_header;
       std::vector<std::uint8_t> m_buffer;
