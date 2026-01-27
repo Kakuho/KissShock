@@ -43,7 +43,12 @@ namespace KissShock{
   }
   
   std::expected<std::vector<std::uint8_t>, QoiLoader::LoaderError> QoiLoader::Decode() const{
-    std::vector<std::uint8_t> output;
+    if(m_header.header != MAGIC){
+      return std::unexpected(LoaderError::MAGIC_FAILED);
+    }
+    std::size_t imageSize = m_header.width * m_header.height * m_header.channels;
+    std::vector<std::uint8_t> output(imageSize);  // init with imageSize amount of elements
+    
   }
 
 }
