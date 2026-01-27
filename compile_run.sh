@@ -6,7 +6,7 @@ CXXSRC="
 rm ./main
 
 
-g++ src/main.cpp -std=c++23 -o main  \
+g++ src/main.cpp -std=c++23 -g -o main  \
      ${CXXSRC} \
      -lsfml-graphics -lsfml-window -lsfml-system \
     
