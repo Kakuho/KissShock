@@ -22,11 +22,33 @@
 
 namespace KissShock{
 
-  struct Pixel{
+  struct Pixel{  // would perf be better if we packed the components into a std::uint32_t?
     std::uint8_t red;
     std::uint8_t green;
     std::uint8_t blue;
     std::uint8_t alpha;
+  };
+
+  class QoiPixelWindow{
+    public:
+      // the window of last seen pixels
+      void Push(Pixel& pixel){
+        if(m_lastIndex == m_buffer.size()){
+          m_lastIndex = 0;
+        }
+        m_buffer[m_lastIndex] = pixel;
+      }
+
+      Pixel Get(std::size_t index){
+        if(!(index < m_buffer.size())){
+          throw std::runtime_error{"QoiPixelWindow::Get(...) index is out of bounds"};
+        }
+        return m_buffer[index];
+      }
+
+    private:
+      std::size_t m_lastIndex;
+      std::array<Pixel, 64> m_buffer;
   };
 
   class QoiLoader{
@@ -71,7 +93,7 @@ namespace KissShock{
       static constexpr std::uint8_t Hash(Pixel& p){
         return (p.red * 3 + p.green * 5 + p.blue * 7 + p.alpha * 11) % 64;
       }
-      
+
       void PrintDetails() const;
       void PrintBuffer() const;
       bool IsEndBlock(std::size_t index) const;
@@ -83,10 +105,7 @@ namespace KissShock{
 
       void HandleRGBChunk(std::size_t index, std::vector<std::uint8_t>& output);
       void HandleRGBAChunk(std::size_t index, std::vector<std::uint8_t>& output);
-
-      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output){
-        throw std::runtime_error{"QoiLoader::HandleIndexChunk(...) Unimplemented"};
-      }
+      void HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output);
 
       void HandleDiffChunk(std::size_t index, std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleDiffChunk(...) Unimplemented"};
@@ -103,6 +122,6 @@ namespace KissShock{
       QoiHeader m_header;
       Pixel m_lastPixel;
       std::vector<std::uint8_t> m_buffer;
-      std::array<Pixel, 64> m_prevpixels;
+      QoiPixelWindow m_window;
   };
 }

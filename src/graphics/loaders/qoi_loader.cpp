@@ -116,4 +116,20 @@ namespace KissShock{
     m_lastPixel.alpha = alpha;
     index += 5;
   }
+
+  void QoiLoader::HandleIndexChunk(std::size_t index, std::vector<std::uint8_t>& output){ 
+    std::uint8_t red = m_buffer[index + 1];
+    std::uint8_t blue = m_buffer[index + 2];
+    std::uint8_t green = m_buffer[index + 3];
+    std::uint8_t alpha = m_buffer[index + 4];
+    output.push_back(red);
+    output.push_back(blue);
+    output.push_back(green);
+    output.push_back(alpha);
+    m_lastPixel.red = red;
+    m_lastPixel.blue = blue;
+    m_lastPixel.green = green;
+    m_lastPixel.alpha = alpha;
+    index += 5;
+  }
 }
