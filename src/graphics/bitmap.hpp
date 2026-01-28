@@ -4,7 +4,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
+#include <string_view>
 #include <print>
+#include <fstream>
 
 #include "util.hpp"
 #include "graphics/pixel.hpp"
@@ -35,8 +37,9 @@ namespace KissShock{
       }
 
       void PrintData() const;
-
-
+      
+      void DumpAsPpm(std::string_view filepath) const;
+  
     private:
       std::size_t m_height;
       std::size_t m_width;
