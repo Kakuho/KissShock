@@ -1,4 +1,7 @@
 #include "window.hpp"
+#include "SFML/Window/Event.hpp"
+
+#include "SFML/Window/Keyboard.hpp"
 #include "graphics/framebuffer.hpp"
 
 namespace KissShock{
@@ -17,6 +20,43 @@ namespace KissShock{
       if(event.type == sf::Event::Closed){
         std::println("Exiting...");
         m_window.close();
+      }
+      if(event.type == sf::Event::KeyPressed){
+        HandleKeyPress(event);
+      }
+    }
+  }
+
+  void Window::HandleKeyPress(sf::Event& event){
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
+      if(pressh_callback){
+        std::println("H Key Pressed");
+        pressh_callback();
+        return;
+      }
+
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::J)){
+      if(pressj_callback){
+        std::println("J Key Pressed");
+        pressj_callback();
+        return;
+      }
+
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)){
+      if(pressk_callback){
+        std::println("K Key Pressed");
+        pressk_callback();
+        return;
+      }
+
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::L)){
+      if(pressl_callback){
+        std::println("L Key Pressed");
+        pressl_callback();
+        return;
       }
     }
   }
