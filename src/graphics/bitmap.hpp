@@ -1,8 +1,13 @@
+#pragma once
+
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 #include <print>
+
+#include "util.hpp"
+#include "graphics/pixel.hpp"
 
 namespace KissShock{
   class Bitmap{
@@ -16,9 +21,23 @@ namespace KissShock{
 
       }
 
-      void PrintData(){
+      constexpr std::size_t Height() const noexcept{ return m_height;}
+      constexpr std::size_t Width() const noexcept{ return m_width;}
+      
+      template<typename T>
+      Pixel PixelAt(Vec2<T> pos) const{
+        std::size_t pixelBase = pos.x + pos.y * Height();
+        auto red = m_pixels[pixelBase];
+        auto green = m_pixels[pixelBase+1];
+        auto blue = m_pixels[pixelBase+2];
+        auto alpha = m_pixels[pixelBase+3];
+        return {red, blue, green, alpha};
+      }
+
+      void PrintData() const{
         for(std::size_t i = 0; i < m_pixels.size(); i += 4){
-          std::println("{:#04x} {:#04x} {:#04x} {:#04x}", m_pixels[i], m_pixels[i+1], m_pixels[i+2], m_pixels[i+3]);
+          std::println("{:#04x} {:#04x} {:#04x} {:#04x}", 
+              m_pixels[i], m_pixels[i+1], m_pixels[i+2], m_pixels[i+3]);
         }
       }
 
