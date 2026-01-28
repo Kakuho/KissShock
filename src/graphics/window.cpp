@@ -5,10 +5,10 @@ namespace KissShock{
   Window::Window()
     :
       m_window{sf::VideoMode(HEIGHT, WIDTH), "KissShock Engine", sf::Style::Resize},
-      m_view{sf::FloatRect{0,  0, 320, 200}}
+      m_view{sf::FloatRect{0,  0, WIDTH, HEIGHT}}
   {
     m_window.setView(m_view);
-    m_fbTexture.create(320, 200);
+    m_fbTexture.create(WIDTH, HEIGHT);
   }
 
   void Window::HandleEvents(){

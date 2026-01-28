@@ -5,6 +5,8 @@
 #include <SFML/Window/WindowStyle.hpp>
 #include <print>
 
+#include "config.hpp"
+
 // uses sfml as the window api, maybe later i'll switch out to sdl if it turns out sfml is not multiplatform
 //
 // window to a 320x200 screen for the og experience
@@ -13,8 +15,8 @@ namespace KissShock{
   class FrameBuffer;
 
   class Window{
-    static constexpr std::size_t HEIGHT = 320;
-    static constexpr std::size_t WIDTH = 200;
+    static constexpr std::size_t HEIGHT = Config::WINDOW_HEIGHT;
+    static constexpr std::size_t WIDTH = Config::WINDOW_WIDTH;
 
     public:
       Window();

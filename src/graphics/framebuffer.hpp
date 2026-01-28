@@ -1,6 +1,7 @@
 #pragma once
 
 //  we're doing software rasterisation so we manage the framebuffer ourselves
+//
 //  screen coordinates starts from (0, 0) in the top left and goes to (height, width)
 //  in the bottom right
 
@@ -10,22 +11,35 @@
 #include "pixel.hpp"
 #include "util.hpp"
 #include "bitmap.hpp"
+#include "config.hpp"
 
 namespace KissShock{
   class FrameBuffer{
-    static constexpr std::size_t HEIGHT = 320;
-    static constexpr std::size_t WIDTH = 200;
+    static constexpr std::size_t HEIGHT = Config::WINDOW_HEIGHT;
+    static constexpr std::size_t WIDTH = Config::WINDOW_WIDTH;
     static constexpr Pixel CLEAR_COLOUR = Pixel{0xF2, 0x9E, 0xC8, 0xFF};
     public:
       std::uint8_t* Get(){return &m_buffer[0];}
 
+      consteval std::size_t Size(){ return HEIGHT * WIDTH * 4;}
+      consteval std::size_t Dimensions(){ return HEIGHT * WIDTH;}
+
       template<typename T>
       void WritePixel(Vec2<T> pos, Pixel val){
-        std::size_t pixelBase = pos.x + pos.y * HEIGHT;
+        std::size_t pixelBase = (pos.x + pos.y * WIDTH) * 4;
         m_buffer[pixelBase] = val.red;
         m_buffer[pixelBase + 1] = val.green;
         m_buffer[pixelBase + 2] = val.blue;
         m_buffer[pixelBase + 3] = val.alpha;
+      }
+
+      template<typename T>
+      void ClearPixel(Vec2<T> pos){
+        std::size_t pixelBase = (pos.x + pos.y * WIDTH) * 4;
+        m_buffer[pixelBase] = CLEAR_COLOUR.red;
+        m_buffer[pixelBase + 1] = CLEAR_COLOUR.green;
+        m_buffer[pixelBase + 2] = CLEAR_COLOUR.blue;
+        m_buffer[pixelBase + 3] = CLEAR_COLOUR.alpha;
       }
 
       void Fill(std::uint8_t val){m_buffer.fill(val);}
@@ -42,6 +56,6 @@ namespace KissShock{
       }
 
     private:
-      std::array<std::uint8_t, 320 * 200 * 4> m_buffer;
+      std::array<std::uint8_t, HEIGHT * WIDTH * 4> m_buffer;
   };
 };
