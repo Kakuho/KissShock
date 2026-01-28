@@ -2,6 +2,7 @@
 #include <bit>
 #include <exception>
 #include <fstream>
+#include <stdexcept>
 
 namespace KissShock{
   QoiLoader::QoiLoader(std::string_view filename)
@@ -17,11 +18,12 @@ namespace KissShock{
     ifst.readsome(raw, size);
     m_buffer = std::move(std::vector<std::uint8_t>{raw, raw+size});
     InitHeader();
+    m_prevpixels.fill(Pixel{0, 0, 0, 0});
   }
 
   void QoiLoader::SetLastPixel(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha){
     // created a function so that if i want to switch representation of Pixel it would be easy
-    m_lastPixel = Pixel{red, blue, green, alpha};
+    m_lastPixel = Pixel{red, green, blue, alpha};
   }
 
   void QoiLoader::SetLastPixel(Pixel pixel){
@@ -66,8 +68,10 @@ namespace KissShock{
     if(m_header.header != MAGIC){
       return std::unexpected(LoaderError::MAGIC_FAILED);
     }
+    m_pos = DATA_START;
     std::size_t imageSize = m_header.width * m_header.height * m_header.channels;
-    std::vector<std::uint8_t> output(imageSize);  // init with imageSize amount of elements
+    std::vector<std::uint8_t> output{};  // init with imageSize amount of elements
+    output.reserve(imageSize);
     while(!IsEndBlock(m_pos)){
       if(m_buffer[m_pos] == 0xFE){
         HandleRGBChunk(output);
@@ -97,39 +101,55 @@ namespace KissShock{
 
   void QoiLoader::HandleRGBChunk(std::vector<std::uint8_t>& output){ 
     std::uint8_t red = m_buffer[m_pos + 1];
-    std::uint8_t blue = m_buffer[m_pos + 2];
-    std::uint8_t green = m_buffer[m_pos + 3];
+    std::uint8_t green = m_buffer[m_pos + 2];
+    std::uint8_t blue = m_buffer[m_pos + 3];
+    std::println("RGB Pixel: {:#04x}{:02x}{:02x}ff", red, green, blue);
     output.push_back(red);
-    output.push_back(blue);
     output.push_back(green);
+    output.push_back(blue);
     output.push_back(m_lastPixel.alpha);
     SetLastPixel(red, green, blue, m_lastPixel.alpha);
-    m_window.Push(m_lastPixel);
+    m_prevpixels[Hash(red, green, blue, m_lastPixel.alpha)] = m_lastPixel;
     m_pos += 4;
   }
 
   void QoiLoader::HandleRGBAChunk(std::vector<std::uint8_t>& output){ 
     std::uint8_t red = m_buffer[m_pos + 1];
-    std::uint8_t blue = m_buffer[m_pos + 2];
-    std::uint8_t green = m_buffer[m_pos + 3];
+    std::uint8_t green = m_buffer[m_pos + 2];
+    std::uint8_t blue = m_buffer[m_pos + 3];
     std::uint8_t alpha = m_buffer[m_pos + 4];
+    std::println("RGBA Pixel: {:#04x}{:02x}{:02x}{:02x}", red, green, blue, alpha);
     output.push_back(red);
-    output.push_back(blue);
     output.push_back(green);
+    output.push_back(blue);
     output.push_back(alpha);
     SetLastPixel(red, green, blue, alpha);
-    m_window.Push(m_lastPixel);
+    m_prevpixels[Hash(red, green, blue, alpha)] = m_lastPixel;
     m_pos += 5;
   }
 
   void QoiLoader::HandleIndexChunk(std::vector<std::uint8_t>& output){ 
     std::uint8_t pindex = m_buffer[m_pos] & 0x3F;
-    auto pixel = m_window.Get(m_pos);
+    auto pixel = m_prevpixels[pindex];
+    std::println("Index Pixel: {:#04x}{:02x}{:02x}{:02x}", pixel.red, pixel.green, pixel.blue, pixel.alpha);
     output.push_back(pixel.red);
     output.push_back(pixel.green);
     output.push_back(pixel.blue);
     output.push_back(pixel.alpha);
     m_lastPixel = pixel;
+    m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
+      m_lastPixel;
     m_pos += 1;
+  }
+
+  std::expected<Bitmap, QoiLoader::LoaderError> QoiLoader::GenerateBitmap(){
+    auto buffer = Decode();
+    if(!buffer){
+      throw std::runtime_error{"Generate Bitmap Failed"};
+      return std::unexpected(LoaderError::DECODE_FAILED);
+    }
+    auto data = *buffer;
+    Bitmap bitmap{m_header.height, m_header.width, std::move(*buffer)};
+    return bitmap;
   }
 }

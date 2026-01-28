@@ -19,45 +19,19 @@
 #include <bit>
 #include <ranges>
 #include <algorithm>
+#include <cassert>
+
+#include "graphics/bitmap.hpp"
+#include "graphics/pixel.hpp"
+
+inline void PrintPixelBuffer(std::vector<std::uint8_t>& buffer){
+  std::println("Size: {}", buffer.size());
+  for(std::size_t i = 0; i < buffer.size(); i += 4){
+    std::println("{:#02x}{:02x}{:02x}{:02x}", buffer[i], buffer[i+1], buffer[i+2], buffer[i+3]);
+  }
+}
 
 namespace KissShock{
-
-  struct Pixel{  
-    // would perf be better if we packed the components into a std::uint32_t?
-    // should just move the value into a 32-bit register
-    std::uint8_t red;
-    std::uint8_t green;
-    std::uint8_t blue;
-    std::uint8_t alpha;
-  };
-
-  class QoiPixelWindow{
-    public:
-      QoiPixelWindow(){
-        m_buffer.fill(Pixel{0, 0, 0, 0});
-      }
-
-      // the window of last seen pixels
-      void Push(Pixel& pixel){
-        if(m_lastIndex == m_buffer.size()){
-          m_lastIndex = 0;
-        }
-        m_buffer[m_lastIndex] = pixel;
-        m_lastIndex++;
-      }
-
-      Pixel Get(std::size_t index){
-        if(!(index < m_buffer.size())){
-          throw std::runtime_error{"QoiPixelWindow::Get(...) index is out of bounds"};
-        }
-        return m_buffer[index];
-      }
-
-    private:
-      std::size_t m_lastIndex;
-      std::array<Pixel, 64> m_buffer;
-  };
-
   class QoiLoader{
     static constexpr std::array<char, 4> MAGIC = {'q', 'o', 'i', 'f'};
     static constexpr Pixel INITIAL_PIXEL = {0, 0, 0, 255};
@@ -68,7 +42,8 @@ namespace KissShock{
 
     enum class LoaderError{
       MAGIC_FAILED,
-      UNKOWN_CHUNK
+      UNKOWN_CHUNK,
+      DECODE_FAILED
     };
 
     enum class DataChunkType: std::uint8_t{
@@ -92,12 +67,18 @@ namespace KissShock{
     public:
       QoiLoader(std::string_view filename);
 
-      static constexpr std::uint8_t Hash(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a){
-        return (r * 3 + g * 5 + b * 7 + a * 11) % 64;
+      static constexpr std::size_t Hash(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a){
+        std::size_t val = r*3;
+        val += g*5;
+        val += b*7;
+        val += a*11;
+        val %= 64;
+        return val;
+        //return (r * 3 + g * 5 + b * 7 + a * 11) % 64;
       }
 
-      static constexpr std::uint8_t Hash(Pixel& p){
-        return (p.red * 3 + p.green * 5 + p.blue * 7 + p.alpha * 11) % 64;
+      static constexpr std::size_t Hash(Pixel& p){
+        return Hash(p.red, p.green, p.blue, p.alpha);
       }
 
       void SetLastPixel(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha);
@@ -107,6 +88,7 @@ namespace KissShock{
       void PrintBuffer() const;
       bool IsEndBlock(std::size_t index) const;
       std::expected<std::vector<std::uint8_t>, LoaderError> Decode();
+      std::expected<Bitmap, QoiLoader::LoaderError> GenerateBitmap();
 
     private:
       void IsValid() const;
@@ -132,6 +114,6 @@ namespace KissShock{
       std::size_t m_pos;
       Pixel m_lastPixel;
       std::vector<std::uint8_t> m_buffer;
-      QoiPixelWindow m_window;
+      std::array<Pixel, 64> m_prevpixels;
   };
 }
