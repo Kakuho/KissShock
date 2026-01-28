@@ -142,6 +142,17 @@ namespace KissShock{
     m_pos += 1;
   }
 
+  void QoiLoader::HandleRunChunk(std::vector<std::uint8_t>& output){
+    auto runlength = m_buffer[m_pos] & 0x3F;
+    for(std::size_t i = 0; i < runlength; i++){
+      output.push_back(m_lastPixel.red);
+      output.push_back(m_lastPixel.green);
+      output.push_back(m_lastPixel.blue);
+      output.push_back(m_lastPixel.alpha);
+    }
+    m_pos++;
+  }
+
   std::expected<Bitmap, QoiLoader::LoaderError> QoiLoader::GenerateBitmap(){
     auto buffer = Decode();
     if(!buffer){

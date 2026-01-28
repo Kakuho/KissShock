@@ -106,9 +106,7 @@ namespace KissShock{
         throw std::runtime_error{"QoiLoader::HandleLumaChunk(...) Unimplemented"};
       }
 
-      void HandleRunChunk(std::vector<std::uint8_t>& output){
-        throw std::runtime_error{"QoiLoader::HandleRunChunk(...) Unimplemented"};
-      }
+      void HandleRunChunk(std::vector<std::uint8_t>& output);
 
       QoiHeader m_header;
       std::size_t m_pos;
