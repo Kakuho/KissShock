@@ -139,7 +139,22 @@ namespace KissShock{
     m_lastPixel = pixel;
     m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
       m_lastPixel;
+
+
     m_pos += 1;
+  }
+
+  void QoiLoader::HandleDiffChunk(std::vector<std::uint8_t>& output){
+    std::uint8_t packed = m_buffer[m_pos];
+    std::uint8_t dred = ((packed >> 4) & 0b11) - 2;
+    std::uint8_t dgreen = ((packed >> 2) & 0b11) - 2;
+    std::uint8_t dblue = (packed & 0b11) -2;
+    m_lastPixel.red += dred;
+    m_lastPixel.green += dgreen;
+    m_lastPixel.blue += dblue;
+    m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
+      m_lastPixel;
+    m_pos++;
   }
 
   void QoiLoader::HandleRunChunk(std::vector<std::uint8_t>& output){

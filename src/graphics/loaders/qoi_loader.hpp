@@ -97,10 +97,7 @@ namespace KissShock{
       void HandleRGBChunk(std::vector<std::uint8_t>& output);
       void HandleRGBAChunk(std::vector<std::uint8_t>& output);
       void HandleIndexChunk(std::vector<std::uint8_t>& output);
-
-      void HandleDiffChunk(std::vector<std::uint8_t>& output){
-        throw std::runtime_error{"QoiLoader::HandleDiffChunk(...) Unimplemented"};
-      }
+      void HandleDiffChunk(std::vector<std::uint8_t>& output);
 
       void HandleLumaChunk(std::vector<std::uint8_t>& output){
         throw std::runtime_error{"QoiLoader::HandleLumaChunk(...) Unimplemented"};
