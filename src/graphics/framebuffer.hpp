@@ -42,6 +42,7 @@ namespace KissShock{
         m_buffer[pixelBase + 3] = CLEAR_COLOUR.alpha;
       }
 
+      void Clear();
       void Fill(std::uint8_t val){m_buffer.fill(val);}
       void FillPixels(Pixel pixels);
 
