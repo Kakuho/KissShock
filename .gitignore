@@ -1,7 +1,6 @@
 build/
 .cache
 *.swp
-assets/*
 compile_commands.json
 docs/*
 main
