@@ -4,6 +4,7 @@ CXXSRC="
   src/graphics/framebuffer.cpp
   src/graphics/renderer.cpp
   src/graphics/window.cpp
+  src/graphics/bitmap.cpp
 "
 
 rm ./main
