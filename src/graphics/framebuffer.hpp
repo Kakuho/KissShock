@@ -21,6 +21,7 @@ namespace KissShock{
     static constexpr std::size_t WIDTH = Config::WINDOW_WIDTH;
     static constexpr Pixel CLEAR_COLOUR = Pixel{0xF2, 0x9E, 0xC8, 0xFF};
     public:
+      FrameBuffer(){FillPixels(CLEAR_COLOUR);}
       std::uint8_t* Get(){return &m_buffer[0];}
 
       consteval std::size_t Size(){ return HEIGHT * WIDTH * 4;}
@@ -71,7 +72,7 @@ namespace KissShock{
   // Impl
 
   template<typename T>
-  void DrawHorizontalLine(Vec2<T> start, int length, Pixel val){
+  void FrameBuffer::DrawHorizontalLine(Vec2<T> start, int length, Pixel val){
     if(length < 0){
       for(int i = 0; i > length; i--){
         WritePixel(Vec2{start.x + i, start.y}, val);
@@ -85,7 +86,7 @@ namespace KissShock{
   }
 
   template<typename T>
-  void DrawVerticalLine(Vec2<T> start, int length, Pixel val){
+  void FrameBuffer::DrawVerticalLine(Vec2<T> start, int length, Pixel val){
     if(length < 0){
       for(int i = 0; i > length; i--){
         WritePixel(Vec2{start.x, start.y + i}, val);
