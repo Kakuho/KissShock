@@ -9,6 +9,7 @@
 
 #include <array>
 #include <cstdint>
+#include <stdexcept>
 
 #include "pixel.hpp"
 #include "util.hpp"
@@ -65,6 +66,10 @@ namespace KissShock{
       template<typename T>
       void DrawVerticalLine(Vec2<T> start, int length, Pixel val);
 
+      template<typename T>
+      void DrawRectangle(Vec2<T> start, Vec2<T> end, Pixel val);
+        // start is the coordinate for top left, end is the bottom right coordinate
+
     private:
       std::array<std::uint8_t, HEIGHT * WIDTH * 4> m_buffer;
   };
@@ -96,6 +101,17 @@ namespace KissShock{
       for(int i = 0; i < length; i++){
         WritePixel(Vec2{start.x, start.y + i}, val);
       }
+    }
+  }
+
+  template<typename T>
+  void FrameBuffer::DrawRectangle(Vec2<T> start, Vec2<T> end, Pixel val){
+    if(start.x > end.x || start.y > end.y){
+      throw std::runtime_error{"Error: FrameBuffer::DrawRectangle(...) start.x > end.x or start.y > end.y"};
+    }
+    std::size_t length = end.x - start.x;
+    for(std::size_t i = start.y; i < end.y; i++){
+      DrawHorizontalLine(Vec2<std::size_t>{start.x, start.y+i}, length, val);
     }
   }
 
