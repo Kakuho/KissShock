@@ -4,6 +4,8 @@
 //
 //  screen coordinates starts from (0, 0) in the top left and goes to (height, width)
 //  in the bottom right
+//
+//  Framebuffer will always be in screen coordinate space
 
 #include <array>
 #include <cstdint>
@@ -56,7 +58,44 @@ namespace KissShock{
         }
       }
 
+      template<typename T>
+      void DrawHorizontalLine(Vec2<T> start, int length, Pixel val);
+
+      template<typename T>
+      void DrawVerticalLine(Vec2<T> start, int length, Pixel val);
+
     private:
       std::array<std::uint8_t, HEIGHT * WIDTH * 4> m_buffer;
   };
+
+  // Impl
+
+  template<typename T>
+  void DrawHorizontalLine(Vec2<T> start, int length, Pixel val){
+    if(length < 0){
+      for(int i = 0; i > length; i--){
+        WritePixel(Vec2{start.x + i, start.y}, val);
+      }
+    }
+    else{
+      for(int i = 0; i < length; i++){
+        WritePixel(Vec2{start.x + i, start.y}, val);
+      }
+    }
+  }
+
+  template<typename T>
+  void DrawVerticalLine(Vec2<T> start, int length, Pixel val){
+    if(length < 0){
+      for(int i = 0; i > length; i--){
+        WritePixel(Vec2{start.x, start.y + i}, val);
+      }
+    }
+    else{
+      for(int i = 0; i < length; i++){
+        WritePixel(Vec2{start.x, start.y + i}, val);
+      }
+    }
+  }
+
 };
