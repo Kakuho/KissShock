@@ -21,10 +21,18 @@ namespace KissShock{
         std::println("Exiting...");
         m_window.close();
       }
+      if(event.type == sf::Event::MouseMoved){
+        HandleMouseMoved(event);
+      }
       if(event.type == sf::Event::KeyPressed){
         HandleKeyPress(event);
       }
     }
+  }
+
+  void Window::HandleMouseMoved(sf::Event& event){
+    std::println("Mouse x: {}", event.mouseMove.x);
+    std::println("Mouse y: {}", event.mouseMove.y);
   }
 
   void Window::HandleKeyPress(sf::Event& event){
@@ -36,13 +44,12 @@ namespace KissShock{
       }
 
     }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::J)){
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::J)){
       if(pressj_callback){
         std::println("J Key Pressed");
         pressj_callback();
         return;
       }
-
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)){
       if(pressk_callback){

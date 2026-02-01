@@ -24,7 +24,11 @@ namespace KissShock{
     public:
       Window();
 
+      constexpr std::size_t Height() const{ return HEIGHT;}
+      constexpr std::size_t Width() const{ return WIDTH;}
+
       void HandleEvents();
+      void HandleMouseMoved(sf::Event& event);
       void HandleKeyPress(sf::Event& event);
 
       void SetFrameBuffer(FrameBuffer& fb);
