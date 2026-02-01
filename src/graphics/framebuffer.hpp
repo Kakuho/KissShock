@@ -31,6 +31,10 @@ namespace KissShock{
       template<typename T>
       void WritePixel(Vec2<T> pos, Pixel val){
         std::size_t pixelBase = (pos.x + pos.y * WIDTH) * 4;
+        if(val.alpha == 0){
+          // alpha is zero
+          return;
+        }
         m_buffer[pixelBase] = val.red;
         m_buffer[pixelBase + 1] = val.green;
         m_buffer[pixelBase + 2] = val.blue;
