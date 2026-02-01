@@ -54,8 +54,7 @@ namespace KissShock{
       void DrawBitmap(Vec2<T> startPos, const Bitmap& bitmap){
         for(std::size_t y = 0; y < bitmap.Height(); y++){
           for(std::size_t x = 0; x < bitmap.Width(); x++){
-            WritePixel(Vec2{x, y}, 
-                bitmap.PixelAt(Vec2{x, y}));
+            WritePixel(Vec2{startPos.x + x, startPos.y + y}, bitmap.PixelAt(Vec2{x, y}));
           }
         }
       }

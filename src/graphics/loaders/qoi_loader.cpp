@@ -12,6 +12,7 @@ namespace KissShock{
   {
     std::ifstream ifst{filename.data(), std::ios_base::ate};
     std::size_t size = ifst.tellg();
+    std::println("Size of File: {}", size);
     ifst.seekg(0);
     // read the data into some buffer
     char raw[size];
@@ -96,6 +97,7 @@ namespace KissShock{
       }
       // index updating is handled in the chunk handler functions
     }
+    std::println("pos at end of decode: {}", m_pos);
     return output;
   }
 
@@ -103,7 +105,7 @@ namespace KissShock{
     std::uint8_t red = m_buffer[m_pos + 1];
     std::uint8_t green = m_buffer[m_pos + 2];
     std::uint8_t blue = m_buffer[m_pos + 3];
-    std::println("RGB Pixel: {:#04x}{:02x}{:02x}ff", red, green, blue);
+    //std::println("RGB Pixel: {:#04x}{:02x}{:02x}ff", red, green, blue);
     output.push_back(red);
     output.push_back(green);
     output.push_back(blue);
@@ -118,7 +120,7 @@ namespace KissShock{
     std::uint8_t green = m_buffer[m_pos + 2];
     std::uint8_t blue = m_buffer[m_pos + 3];
     std::uint8_t alpha = m_buffer[m_pos + 4];
-    std::println("RGBA Pixel: {:#04x}{:02x}{:02x}{:02x}", red, green, blue, alpha);
+    //std::println("RGBA Pixel: {:#04x}{:02x}{:02x}{:02x}", red, green, blue, alpha);
     output.push_back(red);
     output.push_back(green);
     output.push_back(blue);
@@ -131,7 +133,7 @@ namespace KissShock{
   void QoiLoader::HandleIndexChunk(std::vector<std::uint8_t>& output){ 
     std::uint8_t pindex = m_buffer[m_pos] & 0x3F;
     auto pixel = m_prevpixels[pindex];
-    std::println("Index Pixel: {:#04x}{:02x}{:02x}{:02x}", pixel.red, pixel.green, pixel.blue, pixel.alpha);
+    //std::println("Index Pixel: {:#04x}{:02x}{:02x}{:02x}", pixel.red, pixel.green, pixel.blue, pixel.alpha);
     output.push_back(pixel.red);
     output.push_back(pixel.green);
     output.push_back(pixel.blue);
@@ -139,8 +141,6 @@ namespace KissShock{
     m_lastPixel = pixel;
     m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
       m_lastPixel;
-
-
     m_pos += 1;
   }
 
@@ -152,6 +152,10 @@ namespace KissShock{
     m_lastPixel.red += dred;
     m_lastPixel.green += dgreen;
     m_lastPixel.blue += dblue;
+    output.push_back(m_lastPixel.red);
+    output.push_back(m_lastPixel.green);
+    output.push_back(m_lastPixel.blue);
+    output.push_back(m_lastPixel.alpha);
     m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
       m_lastPixel;
     m_pos++;
@@ -165,6 +169,12 @@ namespace KissShock{
       output.push_back(m_lastPixel.blue);
       output.push_back(m_lastPixel.alpha);
     }
+    output.push_back(m_lastPixel.red);
+    output.push_back(m_lastPixel.green);
+    output.push_back(m_lastPixel.blue);
+    output.push_back(m_lastPixel.alpha);
+    m_prevpixels[Hash(m_lastPixel.red, m_lastPixel.green, m_lastPixel.blue, m_lastPixel.alpha)] = 
+      m_lastPixel;
     m_pos++;
   }
 
@@ -175,6 +185,9 @@ namespace KissShock{
       return std::unexpected(LoaderError::DECODE_FAILED);
     }
     auto data = *buffer;
+    std::println("{}", buffer->size());
+    std::println("{}", m_header.height * m_header.width * 4);
+    assert(buffer->size() == m_header.height * m_header.width * 4);
     Bitmap bitmap{m_header.height, m_header.width, std::move(*buffer)};
     return bitmap;
   }

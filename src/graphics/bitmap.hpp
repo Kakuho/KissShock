@@ -28,12 +28,12 @@ namespace KissShock{
       
       template<typename T>
       Pixel PixelAt(Vec2<T> pos) const{
-        std::size_t pixelBase = pos.x + pos.y * Height();
+        std::size_t pixelBase = (pos.x + pos.y * Width()) * 4;
         auto red = m_pixels[pixelBase];
         auto green = m_pixels[pixelBase+1];
         auto blue = m_pixels[pixelBase+2];
         auto alpha = m_pixels[pixelBase+3];
-        return {red, blue, green, alpha};
+        return {red, green, blue, alpha};
       }
 
       void PrintData() const;
