@@ -31,8 +31,9 @@ namespace KissShock{
   }
 
   void Window::HandleMouseMoved(sf::Event& event){
-    std::println("Mouse x: {}", event.mouseMove.x);
-    std::println("Mouse y: {}", event.mouseMove.y);
+    auto coords = m_window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y}, m_view);
+    std::println("Mouse x: {}", coords.x);
+    std::println("Mouse y: {}", coords.y);
   }
 
   void Window::HandleKeyPress(sf::Event& event){
