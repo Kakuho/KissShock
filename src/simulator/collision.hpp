@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <print>
+#include <stdexcept>
 
 namespace KissShock{  
 
@@ -11,20 +13,24 @@ namespace KissShock{
     public:
       enum class Type{Square, Circle, Ellipse};
 
-      Collision(const CollisionTestTable& table): m_handlers{table}{}
+      Collision(Body& body, Type type, const CollisionTestTable& table);
 
       constexpr Type ShapeType() const{ return m_type;}
       bool CollidedWith(Collision& cf2);
 
     private:
-      const CollisionTestTable& m_handlers;
-      Type m_type;
+      void InitSquare();
+      void InitCircle();
+      void InitEllipse();
+
       Body* m_body;
+      Type m_type;
+      const CollisionTestTable& m_handlers;
       union{
         struct{
           std::size_t width;
           std::size_t height;
-        } box;
+        } square;
         struct{
           std::size_t radius;
         } circle;
