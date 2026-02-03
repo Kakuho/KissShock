@@ -16,6 +16,8 @@ namespace KissShock{
     using TestHandler = bool(Collision&, Collision&);
     using TestWrapper = std::function<TestHandler>;
     public:
+      const CollisionTestTable& Get() const{ static CollisionTestTable tbl; return tbl;}
+
       constexpr TestHandler& operator[](Collision& coll1, Collision& coll2) const;
 
     private:
