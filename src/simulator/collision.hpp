@@ -3,12 +3,23 @@
 #include <cstdint>
 
 namespace KissShock{  
-  struct MovingBody;  // base class 
+
+  class Body;
+  class CollisionTestTable;
 
   class Collision{
     public:
-      enum class Type{Square, Circle, Ellipse} type;
-      MovingBody* movingBody;
+      enum class Type{Square, Circle, Ellipse};
+
+      Collision(const CollisionTestTable& table): m_handlers{table}{}
+
+      constexpr Type ShapeType() const{ return m_type;}
+      bool CollidedWith(Collision& cf2);
+
+    private:
+      const CollisionTestTable& m_handlers;
+      Type m_type;
+      Body* m_body;
       union{
         struct{
           std::size_t width;
@@ -21,16 +32,5 @@ namespace KissShock{
           std::size_t radius;
         } ellipse;
       };
-
-      void CalculateOrigin();
-      bool CollidedWith(Collision& cf2);
-
-    private:
-      friend bool HandleSquareVsSquare(Collision& square1, Collision& square2);
-      friend bool HandleSquareVsCircle(Collision& square, Collision& circle);
-      friend bool HandleSquareVsEllipse(Collision& square, Collision& ellipse);
-      friend bool HandleCircleVsCircle(Collision& circle1, Collision& circle2);
-      friend bool HandleCircleVsEllipse(Collision& circle, Collision& ellipse);
-      friend bool HandleEllipseVsEllipse(Collision& ellipse1, Collision& ellipse2);
   };
 }
