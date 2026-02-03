@@ -12,8 +12,6 @@ namespace KissShock{
     public:
       virtual void Simulate() = 0;
 
-      virtual void OnCollision(Body& body) = 0;
-
       bool CollidedWith(Body& body){
         return m_collision.CollidedWith(body.m_collision);
       }
