@@ -2,6 +2,7 @@
 #include "graphics/framebuffer.hpp"
 #include "graphics/loaders/qoi_loader.hpp"
 #include "graphics/bitmap.hpp"
+#include "graphics/spritedb.hpp"
 #include <stdexcept>
 
 void SampleFrameBufferLines(){
@@ -27,11 +28,76 @@ void FrameBufferQoi(){
     throw std::runtime_error{"Error: Bitmap decoding not successful"};
   }
   bitmap->DumpAsPpm("mero_head.ppm");
+  Vec2 pos{0, 0};
   FrameBuffer fb{};
-  fb.DrawBitmap(Vec2{0, 0}, *bitmap);
+  Window window{};
+  window.SetPressLCallback([&pos, &window](){
+      if(pos.x == window.Width() - 64){
+        pos.x = 0;
+      }
+      else{
+        pos.x++;
+      }
+  });
+  bool toggle = true;
+  window.SetFrameBuffer(fb);
+  while(true){
+    fb.Clear();
+    fb.DrawBitmap(pos, *bitmap);
+    window.HandleEvents();
+    window.Draw();
+  }
+}
+
+void FlickeringDemo(){
+  using namespace KissShock;
+  QoiLoader loader{"assets/mero_head.qoi"};
+  //QoiLoader loader{"assets/mero_colours.qoi"};
+  auto bitmap = loader.GenerateBitmap();
+  if(!bitmap){
+    throw std::runtime_error{"Error: Bitmap decoding not successful"};
+  }
+  bitmap->DumpAsPpm("mero_head.ppm");
+  Vec2 pos{0, 0};
+  FrameBuffer fb{};
+  FrameBuffer dfb{};
+  dfb.Clear();
+  Window window{};
+  window.SetPressLCallback([&pos, &window](){
+      if(pos.x == window.Width() - 64){
+        pos.x = 0;
+      }
+      else{
+        pos.x++;
+      }
+  });
+  bool toggle = true;
+  window.SetFrameBuffer(fb);
+  while(true){
+    fb.Clear();
+    fb.DrawBitmap(pos, *bitmap);
+    window.HandleEvents();
+    if(toggle){
+      window.SetFrameBuffer(fb);
+      toggle = !toggle;
+    }
+    else{
+      window.SetFrameBuffer(dfb);
+      toggle = !toggle;
+    }
+    window.Draw();
+  }
+}
+
+void MousePrinter(){
+  using namespace KissShock;
+  QoiLoader loader{"assets/mero_head.qoi"};
+  //QoiLoader loader{"assets/mero_colours.qoi"};
+  FrameBuffer fb{};
   Window window{};
   window.SetFrameBuffer(fb);
   while(true){
+    fb.Clear();
     window.HandleEvents();
     window.Draw();
   }
@@ -73,5 +139,5 @@ void BitmapTests(){
 }
 
 int main(){
-  FrameBufferQoi();
+  MousePrinter();
 }

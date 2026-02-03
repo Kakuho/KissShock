@@ -1,12 +1,15 @@
 #pragma once
 
 // Simulates the movement of bodies
+// our world simulation manager, it will handle the simulation of movement for registered bodies, collision detection and 
+// collision resolution
 
 #include <print>
 #include <cstdint>
 #include <list>
 
 #include "util.hpp"
+#include "body.hpp"
 
 // you can define a bunch of integrator policies, that can then be plugged into 
 struct Integrator{
@@ -17,17 +20,11 @@ struct Integrator{
 };
 
 namespace KissShock{
-  // our physics engine, it will handle the simulation of movement for registered bodies, collision detection and 
-  // collision resolution
-
-  bool CollisionSquareSquareTest(CollisionFrame& cf1, CollisionFrame& cf2){
-    std::println("Square on Square Collision Test");
-    return true;
-  }
 
   struct CollisionPair{
-    MovingBody& body1;
-    MovingBody& body2;
+    // what if pointer invalidation from vector?
+    Body* body1;
+    Body* body2;
   };
 
   class Simulator{
@@ -38,7 +35,6 @@ namespace KissShock{
         for(auto& body: bodies){
           body.Simulate();
         }
-
       }
 
       std::list<CollisionPair> DetectCollisions(){
@@ -71,50 +67,27 @@ namespace KissShock{
 }
 
 namespace MeroPong{
-  class Wall: public KissShock::MovingBody{
+  class Wall: public KissShock::Body{
     using Vec2Type = KissShock::Vec2<int>;
     public:
-      virtual void Simulate() override { 
-        // a wall does nothing, so simulation does not do anything
-      }
-      virtual void OnCollision(MovingBody& body){
-
-      }
-    private:
+      virtual void Simulate() override;
+      virtual void OnCollision(Body& body);
   };
 
-  class Paddle: public KissShock::MovingBody{
+  class Paddle: public KissShock::Body{
     using Vec2Type = KissShock::Vec2<int>;
     public:
       static constexpr std::size_t PADDLE_CID = 230;
-
-      virtual void Simulate() override { 
-        // do whatever you want bruh its your own custom body
-      }
-
-      virtual void OnCollision(MovingBody& body) override{
-      }
+      virtual void Simulate() override;
+      virtual void OnCollision(Body& body) override{};
   };
 
-  class Ball: public KissShock::MovingBody{
+  class Ball: public KissShock::Body{
     using Vec2Type = KissShock::Vec2<int>;
     public:
       static constexpr std::size_t BALL_CID = 100;
-      virtual void Simulate() override { 
-        // do whatever you want bruh its your own custom body
-      }
-
-      virtual void OnCollision(MovingBody& body) override{
-        if(auto wall = dynamic_cast<Wall*>(&body); wall){
-          m_vel.x = -m_vel.x;
-        }
-        else if(dynamic_cast<Paddle&>(body)){
-          m_vel.x = -m_vel.x;
-        }
-        else if(dynamic_cast<Paddle&>(body)){
-          m_vel.x = -m_vel.x;
-        }
-      }
+      virtual void Simulate() override;
+      virtual void OnCollision(Body& body) override;
   };
 
 }
