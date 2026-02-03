@@ -10,6 +10,16 @@
 namespace KissShock{
   class Body{
     public:
+      Body(Vec2<int> topleft, Vec2<int> initialVel, Collision::Type coltype, std::size_t width, std::size_t height):
+        m_collision{},
+        m_pos{topleft},
+        m_vel{initialVel},
+        m_width{width},
+        m_height{height}
+      {
+        UpdateCenter();
+      }
+
       virtual void Simulate() = 0;
 
       bool CollidedWith(Body& body){
@@ -18,10 +28,11 @@ namespace KissShock{
 
       Collision& CFrame(){return m_collision;}
       const Vec2<int>& GetPos() const { return m_pos;}
+      const Vec2<int>& GetCenter() const { return m_pos;}
       std::size_t Height() const { return m_height;}
       std::size_t Width() const { return m_width;}
 
-      const void CalculateCenter() { 
+      const void UpdateCenter() { 
         m_center = Vec2<int>(m_height/2 + m_pos.x, m_width/2 + m_pos.y);
       }
 
