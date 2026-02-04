@@ -4,6 +4,8 @@
 #include <print>
 #include <stdexcept>
 
+#include "util.hpp"
+
 namespace KissShock{  
 
   class Body;
@@ -16,6 +18,9 @@ namespace KissShock{
       Collision(Body& body, Type type, const CollisionTestTable& table);
 
       constexpr Type ShapeType() const{ return m_type;}
+      const Vec2<int>& GetCenter() const;
+      const Body* GetBody(){ return m_body;}
+
       bool CollidedWith(Collision& cf2);
 
     private:

@@ -6,12 +6,13 @@
 
 #include "util.hpp"
 #include "collision.hpp"
+#include "collision_tests.hpp"
 
 namespace KissShock{
   class Body{
     public:
       Body(Vec2<int> topleft, Vec2<int> initialVel, Collision::Type coltype, std::size_t width, std::size_t height):
-        m_collision{},
+        m_collision{*this, coltype, CollisionTestTable::Get()},
         m_pos{topleft},
         m_vel{initialVel},
         m_width{width},

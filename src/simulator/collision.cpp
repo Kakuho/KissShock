@@ -21,6 +21,10 @@ namespace KissShock{
     }
   }
 
+  const Vec2<int>& Collision::GetCenter() const{
+    return m_body->GetCenter();
+  }
+
   void Collision::InitSquare(){
     square.width = m_body->Width();
     square.height = m_body->Height();
