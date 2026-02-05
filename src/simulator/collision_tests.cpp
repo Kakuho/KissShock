@@ -43,11 +43,12 @@ namespace KissShock{
     auto* body1 = square1.GetBody();
     auto* body2 = square2.GetBody();
     // test along the x axis
-    if(body1->GetPos().x + body1->Width() < body2->GetPos().x) return false;
-    if(body2->GetPos().x + body2->Width() < body1->GetPos().x) return false;
+    //  should we minus 1 from width and height to get the actual screen coord?
+    if(body1->GetPos().x + body1->Width() - 1  < body2->GetPos().x) return false;
+    if(body2->GetPos().x + body2->Width() - 1 < body1->GetPos().x) return false;
     // test along the y axis
-    if(body1->GetPos().y + body1->Width() < body2->GetPos().y) return false;
-    if(body2->GetPos().y + body2->Width() < body1->GetPos().y) return false;
+    if(body1->GetPos().y + body1->Height() - 1 < body2->GetPos().y) return false;
+    if(body2->GetPos().y + body2->Height() - 1 < body1->GetPos().y) return false;
     return true;
   }
 }

@@ -33,6 +33,12 @@ namespace KissShock{
       std::size_t Height() const { return m_height;}
       std::size_t Width() const { return m_width;}
 
+      constexpr std::size_t MinX() const noexcept { return m_pos.x;}
+      constexpr std::size_t MaxX() const noexcept { return m_pos.x + m_width - 1;}
+
+      constexpr std::size_t MinY() const noexcept { return m_pos.y;}
+      constexpr std::size_t MaxY() const noexcept { return m_pos.y + m_height - 1;}
+
       const void UpdateCenter() { 
         m_center = Vec2<int>(m_height/2 + m_pos.x, m_width/2 + m_pos.y);
       }
