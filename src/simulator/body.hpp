@@ -33,6 +33,8 @@ namespace KissShock{
       const Vec2<int>& GetPos() const { return m_pos;}
       const Vec2<int>& GetCenter() const { return m_pos;}
 
+      Vec2<int>& Vel() { return m_vel;}
+
       std::size_t Height() const { return m_height;}
       std::size_t Width() const { return m_width;}
 
