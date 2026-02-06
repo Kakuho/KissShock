@@ -4,24 +4,9 @@
 #include "simulator/collision.hpp"
 #include "simulator/collision_tests.hpp"
 
+#include "test_body.hpp"
+
 using namespace KissShock;
-
-class TestBody: public KissShock::Body{
-  public:
-    TestBody(Vec2<int> topleft, Vec2<int> initialVel, Collision::Type coltype, std::size_t width, std::size_t height):
-      Body{topleft, initialVel, coltype, width, height}
-    {
-
-    }
-
-    virtual void Simulate(){/* empty simulation function*/ } 
-
-    void SetPos(KissShock::Vec2<int> pos){
-      m_pos = pos;
-    }
-
-  private:
-};
 
 TEST_CASE("Collision: Tests if collision detection between squares work 1"){
   TestBody b1{Vec2<int>{0, 0}, Vec2<int>{0, 0}, Collision::Type::Square, 100, 100};

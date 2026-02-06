@@ -53,6 +53,7 @@
 //    will not change
 //    The CRHandler is the collision resolution handler for src when it collides with other
 
+#include <concepts>
 #include <map>
 
 #include "body.hpp"
@@ -62,6 +63,7 @@ namespace KissShock{
   template<typename T>
   concept RegisterableEntity = requires(T a, std::size_t b){
     { T::SetId(b) } -> std::same_as<void>;
+    { T::Id }       -> std::convertible_to<std::size_t>;
     { a.GetId()   } -> std::convertible_to<std::size_t>;
   };
 

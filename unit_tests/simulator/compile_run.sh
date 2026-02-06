@@ -12,6 +12,8 @@ TEST_DIR="
 
 TEST_SRC="
   ./collision.cpp
+  ./registration.cpp
+  ./test_body.cpp
 "
 
 rm ./tests
