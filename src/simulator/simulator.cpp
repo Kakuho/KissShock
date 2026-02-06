@@ -36,4 +36,10 @@ namespace KissShock{
       }
     }
   }
+
+  // problem is that we want the engine to own all entity instances, 
+  // it shouldn't fall to the user to create a body and then register them into simulator...
+  void Simulator::AddBody(Body& body){
+    m_bodies.push_back(&body);
+  }
 }
