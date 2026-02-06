@@ -60,7 +60,7 @@
 namespace KissShock{
 
   template<typename T>
-  concept Registerable = requires(T a, std::size_t b){
+  concept RegisterableEntity = requires(T a, std::size_t b){
     { T::SetId(b) } -> std::same_as<void>;
     { a.GetId()   } -> std::convertible_to<std::size_t>;
   };
@@ -69,7 +69,13 @@ namespace KissShock{
     using CollisionResolutionF = void(Body& b1);
     using BodyId = std::size_t;
     public:
-      void RegisterBody(const Body& body);
+
+      template<typename T>
+        requires RegisterableEntity<T>
+      void Register(){ 
+        T::SetId(GetNewId());
+      }
+
       void MakeStatic(BodyId bid);
       void RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f);
 
