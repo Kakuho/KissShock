@@ -59,7 +59,6 @@
 
 #include "body.hpp"
 
-
 namespace KissShock{
 
   template<typename T>
@@ -82,7 +81,8 @@ namespace KissShock{
 
       void MakeStatic(BodyId bid);
       void RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f);
-      std::optional<CollisionResolutionF> GetHandler(BodyId srcid, BodyId otherid);
+      std::optional<CollisionResolutionF> GetHandler(BodyId srcid, BodyId otherid) const;
+      bool HasCustomResolution(BodyId srcid);
 
     private:
       BodyId GetNewId();

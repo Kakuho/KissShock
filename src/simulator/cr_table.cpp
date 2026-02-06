@@ -10,7 +10,7 @@ namespace KissShock{
     m_table[srcid][otherid] = f;
   }
 
-  auto CRTable::GetHandler(BodyId srcid, BodyId otherid) -> std::optional<CollisionResolutionF>{
+  auto CRTable::GetHandler(BodyId srcid, BodyId otherid) const -> std::optional<CollisionResolutionF>{
     if(auto srctable = m_table.find(srcid); srctable != m_table.end()){
       auto handlerTable = srctable->second;
       if(auto handler = handlerTable.find(otherid); handler != handlerTable.end()){
@@ -22,6 +22,15 @@ namespace KissShock{
     }
     else{
       return std::nullopt;
+    }
+  }
+
+  bool CRTable::HasCustomResolution(BodyId srcid){
+    if(auto srctable = m_table.find(srcid); srctable != m_table.end()){
+      return true;
+    }
+    else{
+      return false;
     }
   }
 }
