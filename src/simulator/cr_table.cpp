@@ -6,6 +6,10 @@ namespace KissShock{
     return m_currentId++;
   }
 
+  void CRTable::RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f){
+    m_table[srcid][otherid] = f;
+  }
+
   auto CRTable::GetHandler(BodyId srcid, BodyId otherid) -> std::optional<CollisionResolutionF>{
     if(auto srctable = m_table.find(srcid); srctable != m_table.end()){
       auto handlerTable = srctable->second;
