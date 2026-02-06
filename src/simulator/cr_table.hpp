@@ -68,7 +68,7 @@ namespace KissShock{
   };
 
   class CRTable{
-    using CollisionResolutionF = void(Body& b1);
+    using CollisionResolutionF = std::function<void(Body& b1)>;
     using BodyId = std::size_t;
     public:
 
