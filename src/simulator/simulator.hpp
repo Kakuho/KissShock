@@ -35,6 +35,9 @@ namespace KissShock{
       std::list<CollisionPair> DetectCollisions();
       void HandleCollisions();
 
+      CRTable& CollResTable(){ return m_crtable;}
+      const CRTable& CollResTable() const{ return m_crtable;}
+
     private:
       std::list<Body*> bodies;
       CRTable m_crtable;
