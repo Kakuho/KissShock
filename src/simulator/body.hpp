@@ -43,11 +43,15 @@ namespace KissShock{
         m_center = Vec2<int>(m_height/2 + m_pos.x, m_width/2 + m_pos.y);
       }
 
+      constexpr std::size_t EntityId() const { return m_entityId;}
+      constexpr void SetEntityId(std::size_t id){ m_entityId = id;}
+
     protected:
       Collision m_collision;
       Vec2<int> m_pos;
       Vec2<int> m_center;
       Vec2<int> m_vel;
+      std::size_t m_entityId;   // used to interface with the simulator sub systems
       std::size_t m_width;
       std::size_t m_height;
   };
