@@ -31,41 +31,9 @@ namespace KissShock{
     // what if we use a collision handler table which allows users to define 
     // custom collision resolution handling 
     public:
-      void Tick(){
-        for(auto& body: bodies){
-          body->Simulate();
-        }
-        HandleCollisions();
-      }
-
-      std::list<CollisionPair> DetectCollisions(){
-        std::list<CollisionPair> collisions;
-        for(auto& body1: bodies){
-          for(auto& body2: bodies){
-            // O(n^2) collision detection
-            if(&body1 == &body2){
-              continue;
-            }
-            if(body1->CollidedWith(*body2)){
-              collisions.push_back(CollisionPair{body1, body2});
-            }
-          }
-        }
-        return collisions;
-      }
-
-      void HandleCollisions(){
-        std::list<CollisionPair> collisions = std::move(DetectCollisions());
-        for(auto collisionPair: collisions){
-          auto [body1, body2] = collisionPair;
-          if(m_crtable.HasCustomResolution(body1->EntityId())){
-            auto handler = m_crtable.GetHandler(body1->EntityId(), body2->EntityId());
-            if(handler){
-              handler.value()(*body1);
-            }
-          }
-        }
-      }
+      void Tick();
+      std::list<CollisionPair> DetectCollisions();
+      void HandleCollisions();
 
     private:
       std::list<Body*> bodies;
