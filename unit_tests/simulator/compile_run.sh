@@ -5,6 +5,7 @@ CXXSRC="
   ${SRC_DIR}/simulator/collision.cpp
   ${SRC_DIR}/simulator/collision_tests.cpp
   ${SRC_DIR}/simulator/cr_table.cpp
+  ${SRC_DIR}/simulator/simulator.cpp
 "
 
 TEST_DIR="
@@ -13,8 +14,9 @@ TEST_DIR="
 
 TEST_SRC="
   ./collision.cpp
-  ./registration.cpp
+  ./resolution.cpp
   ./test_body.cpp
+  ./tick.cpp
 "
 
 rm ./tests
