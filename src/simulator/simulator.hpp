@@ -39,7 +39,7 @@ namespace KissShock{
       const CRTable& CollResTable() const{ return m_crtable;}
 
     private:
-      std::list<Body*> bodies;
+      std::list<Body*> m_bodies;
       CRTable m_crtable;
   };
 }

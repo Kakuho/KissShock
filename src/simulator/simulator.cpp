@@ -2,7 +2,7 @@
 
 namespace KissShock{
   void Simulator::Tick(){
-    for(auto& body: bodies){
+    for(auto& body: m_bodies){
       body->Simulate();
     }
     HandleCollisions();
@@ -10,8 +10,8 @@ namespace KissShock{
 
   std::list<CollisionPair> Simulator::DetectCollisions(){
     std::list<CollisionPair> collisions;
-    for(auto& body1: bodies){
-      for(auto& body2: bodies){
+    for(auto& body1: m_bodies){
+      for(auto& body2: m_bodies){
         // O(n^2) collision detection
         if(&body1 == &body2){
           continue;
