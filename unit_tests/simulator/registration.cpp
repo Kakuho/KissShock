@@ -12,5 +12,9 @@ using namespace KissShock;
 TEST_CASE("Registration: CR_Table correctly registers a body"){
   CRTable colresTable;
   colresTable.Register<TestBody>();
+  colresTable.Register<TestBody1>();
+  colresTable.Register<TestBody2>();
   CHECK(TestBody::Id == 0);
+  CHECK(TestBody1::Id == 1);
+  CHECK(TestBody2::Id == 2);
 }

@@ -4,6 +4,7 @@ SRC_DIR="/home/ka/C++/projects/kiss_shock/branches/unit_tests/src"
 CXXSRC="
   ${SRC_DIR}/simulator/collision.cpp
   ${SRC_DIR}/simulator/collision_tests.cpp
+  ${SRC_DIR}/simulator/cr_table.cpp
 "
 
 TEST_DIR="
