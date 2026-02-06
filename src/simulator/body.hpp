@@ -28,8 +28,11 @@ namespace KissShock{
       }
 
       Collision& CFrame(){return m_collision;}
+
+      Vec2<int>& Pos() { return m_pos;}
       const Vec2<int>& GetPos() const { return m_pos;}
       const Vec2<int>& GetCenter() const { return m_pos;}
+
       std::size_t Height() const { return m_height;}
       std::size_t Width() const { return m_width;}
 

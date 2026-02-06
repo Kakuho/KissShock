@@ -10,6 +10,7 @@
 
 #include "util.hpp"
 #include "body.hpp"
+#include "cr_table.hpp"
 
 // you can define a bunch of integrator policies, that can then be plugged into 
 struct Integrator{
@@ -20,7 +21,6 @@ struct Integrator{
 };
 
 namespace KissShock{
-
   struct CollisionPair{
     // what if pointer invalidation from vector?
     Body* body1;
@@ -33,8 +33,9 @@ namespace KissShock{
     public:
       void Tick(){
         for(auto& body: bodies){
-          body.Simulate();
+          body->Simulate();
         }
+        HandleCollisions();
       }
 
       std::list<CollisionPair> DetectCollisions(){
@@ -45,7 +46,7 @@ namespace KissShock{
             if(&body1 == &body2){
               continue;
             }
-            if(body1.CollidedWith(body2)){
+            if(body1->CollidedWith(*body2)){
               collisions.push_back(CollisionPair{body1, body2});
             }
           }
@@ -54,40 +55,20 @@ namespace KissShock{
       }
 
       void HandleCollisions(){
-
-      }
-
-      void RegisterBody(MovingBody& body){
-        bodies.push_back(body);
+        std::list<CollisionPair> collisions = std::move(DetectCollisions());
+        for(auto collisionPair: collisions){
+          auto [body1, body2] = collisionPair;
+          if(m_crtable.HasCustomResolution(body1->EntityId())){
+            auto handler = m_crtable.GetHandler(body1->EntityId(), body2->EntityId());
+            if(handler){
+              handler.value()(*body1);
+            }
+          }
+        }
       }
 
     private:
-      std::list<MovingBody> bodies;
+      std::list<Body*> bodies;
+      CRTable m_crtable;
   };
-}
-
-namespace MeroPong{
-  class Wall: public KissShock::Body{
-    using Vec2Type = KissShock::Vec2<int>;
-    public:
-      virtual void Simulate() override;
-      virtual void OnCollision(Body& body);
-  };
-
-  class Paddle: public KissShock::Body{
-    using Vec2Type = KissShock::Vec2<int>;
-    public:
-      static constexpr std::size_t PADDLE_CID = 230;
-      virtual void Simulate() override;
-      virtual void OnCollision(Body& body) override{};
-  };
-
-  class Ball: public KissShock::Body{
-    using Vec2Type = KissShock::Vec2<int>;
-    public:
-      static constexpr std::size_t BALL_CID = 100;
-      virtual void Simulate() override;
-      virtual void OnCollision(Body& body) override;
-  };
-
 }
