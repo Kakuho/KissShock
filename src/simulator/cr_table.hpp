@@ -21,15 +21,17 @@
 //    
 //      CRTbl.RegisterBodyType(Id)
 //
-//    By default a user body will be given the default collision resolution handler which assumes the body is a newtonian body.
+//    By default a user body will be given the default collision resolution handler which assumes 
+//    the body is a newtonian body.
+//
 //    If the user wants a body to be static then they can perform the following:
 //
 //      CRTbl.MakeStatic(Id)
 //
 //    Now its collision resolution function does nothing.
 //
-//    If the user wants customised behaviour for collision handling, they can use register a new collision handler like
-//    so:
+//    If the user wants customised behaviour for collision handling, they can use register a new 
+//    collision handler like so:
 //      
 //      CRTable.RegisterCollisionHandler(Id of the type of the object, Id of the type of the collided object,
 //      CollisionHandler)
@@ -47,7 +49,8 @@
 //      h_0[bid_3]  -> h_bid_3[0] -> crHandler
 //  
 //    The first index indicates the body, src, to be acted upon, it is this body whose state will change
-//    The second index indicates  the body, other, which the original body has acted upon. Their state will not change
+//    The second index indicates  the body, other, which the original body has acted upon. Their state 
+//    will not change
 //    The CRHandler is the collision resolution handler for src when it collides with other
 
 #include <map>
@@ -55,15 +58,24 @@
 #include "body.hpp"
 
 namespace KissShock{
+
+  template<typename T>
+  concept Registerable = requires(T a, std::size_t b){
+    { T::SetId(b) } -> std::same_as<void>;
+    { a.GetId()   } -> std::convertible_to<std::size_t>;
+  };
+
   class CRTable{
     using CollisionResolutionF = void(Body& b1);
-    using BodyId = int;
+    using BodyId = std::size_t;
     public:
-      void RegisterBody(BodyId bid);
+      void RegisterBody(const Body& body);
       void MakeStatic(BodyId bid);
       void RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f);
 
     private:
+      BodyId GetNewId();
       std::map<BodyId, std::map<BodyId, CollisionResolutionF>> m_table;
+      BodyId m_currentId = 0;
   };
 }
