@@ -55,8 +55,10 @@
 
 #include <concepts>
 #include <map>
+#include <optional>
 
 #include "body.hpp"
+
 
 namespace KissShock{
 
@@ -80,6 +82,7 @@ namespace KissShock{
 
       void MakeStatic(BodyId bid);
       void RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f);
+      std::optional<CollisionResolutionF> GetHandler(BodyId srcid, BodyId otherid);
 
     private:
       BodyId GetNewId();
