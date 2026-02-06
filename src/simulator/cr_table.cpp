@@ -25,7 +25,7 @@ namespace KissShock{
     }
   }
 
-  bool CRTable::HasCustomResolution(BodyId srcid){
+  bool CRTable::HasCustomResolution(BodyId srcid) const{
     if(auto srctable = m_table.find(srcid); srctable != m_table.end()){
       return true;
     }

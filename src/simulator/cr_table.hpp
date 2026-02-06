@@ -82,7 +82,7 @@ namespace KissShock{
       void MakeStatic(BodyId bid);
       void RegisterCollisionHandler(BodyId srcid, BodyId otherid, CollisionResolutionF f);
       std::optional<CollisionResolutionF> GetHandler(BodyId srcid, BodyId otherid) const;
-      bool HasCustomResolution(BodyId srcid);
+      bool HasCustomResolution(BodyId srcid) const;
 
     private:
       BodyId GetNewId();
