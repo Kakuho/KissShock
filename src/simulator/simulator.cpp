@@ -2,6 +2,7 @@
 
 namespace KissShock{
   void Simulator::Tick(){
+    // only problem is what if it overshoots?
     for(auto& body: m_bodies){
       body->Simulate();
     }

@@ -31,11 +31,14 @@ namespace KissShock{
     // what if we use a collision handler table which allows users to define 
     // custom collision resolution handling 
     public:
+      using EntityCollection = std::list<Body*>;
+
       void Tick();
       std::list<CollisionPair> DetectCollisions();
       void HandleCollisions();
 
       void AddBody(Body& body);
+      const EntityCollection& GetBodies() const { return m_bodies;}
 
       CRTable& CollResTable(){ return m_crtable;}
       const CRTable& CollResTable() const{ return m_crtable;}
