@@ -11,7 +11,7 @@
 namespace KissShock{
   constexpr Vec2<std::size_t> WorldToScreen(Vec2<int> worldCoords){
     // for now we just assume we add 20 to the world coordinates lmao...
-    return Vec2<std::size_t>(worldCoords.x + 20, worldCoords.y - 20);
+    return Vec2<std::size_t>(worldCoords.x + 20, worldCoords.y);
   }
 
   constexpr Vec2<int> ScreenToWorld(Vec2<std::size_t> worldCoords){
