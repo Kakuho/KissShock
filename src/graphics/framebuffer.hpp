@@ -15,6 +15,9 @@
 #include "util.hpp"
 #include "bitmap.hpp"
 #include "config.hpp"
+#include "transforms.hpp"
+
+#include "simulator/simulator.hpp"
 
 namespace KissShock{
   class FrameBuffer{
@@ -62,7 +65,7 @@ namespace KissShock{
           }
         }
       }
-
+      
       template<typename T>
       void DrawHorizontalLine(Vec2<T> start, int length, Pixel val);
 
@@ -72,6 +75,11 @@ namespace KissShock{
       template<typename T>
       void DrawRectangle(Vec2<T> start, Vec2<T> end, Pixel val);
         // start is the coordinate for top left, end is the bottom right coordinate
+        
+      template<typename T>
+      void DrawRectangle(Vec2<T> start, std::size_t height, std::size_t width, Pixel val);
+
+      void DrawEntities(Simulator::EntityCollection& entities);
 
     private:
       std::array<std::uint8_t, HEIGHT * WIDTH * 4> m_buffer;
@@ -118,4 +126,10 @@ namespace KissShock{
     }
   }
 
+  template<typename T>
+  void FrameBuffer::DrawRectangle(Vec2<T> start, std::size_t height, std::size_t width, Pixel val){
+    for(std::size_t i = start.y; i < height; i++){
+      DrawHorizontalLine(Vec2<std::size_t>{start.x, start.y+i}, width, val);
+    }
+  }
 };
