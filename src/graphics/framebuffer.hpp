@@ -79,7 +79,7 @@ namespace KissShock{
       template<typename T>
       void DrawRectangle(Vec2<T> start, std::size_t height, std::size_t width, Pixel val);
 
-      void DrawEntities(Simulator::EntityCollection& entities);
+      void DrawEntities(const Simulator::EntityCollection& entities);
 
     private:
       std::array<std::uint8_t, HEIGHT * WIDTH * 4> m_buffer;

@@ -17,6 +17,14 @@ namespace KissShock{
       m_buffer[i+2] = pixel.blue;
       m_buffer[i+3] = pixel.alpha;
     }
+  }
 
+  void FrameBuffer::DrawEntities(const Simulator::EntityCollection& entities){
+    // requires both the entity position in screen coordinates and its width and height
+    for(auto& entity: entities){
+      auto screenCoords = WorldToScreen(entity->Pos());
+      std::println("Screen Coords: {}, {}", screenCoords.x, screenCoords.y);
+      DrawRectangle(screenCoords, entity->Height(), entity->Width(), Pixel{0x00, 0x00, 0x00, 0xFF});
+    }
   }
 }
