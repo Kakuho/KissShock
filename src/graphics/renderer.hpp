@@ -4,6 +4,6 @@
 
 namespace KissShock{
   class Renderer{
-
+    
   };
 }
